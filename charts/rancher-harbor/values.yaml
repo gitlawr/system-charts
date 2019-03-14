@@ -22,10 +22,19 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
   tls:
     enabled: true
+    # rancher, letsEncrypt, secrets
+    source: rancher
     # Fill the secretName if you want to use the certificate of 
     # yourself when Harbor serves with HTTPS. A certificate will 
     # be generated automatically by the chart if leave it empty
     secretName: ""
+
+### LetsEncrypt config ###
+# ProTip: The production environment only allows you to register a name 5 times a week.
+#         Use staging until you have your config right.
+letsEncrypt:
+  # email: none@example.com
+  environment: production
 
 harborAdminPassword: Harbor12345
 # The secret key used for encryption. Must be a string of 16 chars.
@@ -267,3 +276,10 @@ notary:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+# 
+# tls
+#   Where to offload the TLS/SSL encryption
+# - ingress (default)
+# - external
+tls: ingress
