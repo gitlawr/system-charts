@@ -31,11 +31,7 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.isAutoGenedCertNeeded" -}}
-  {{- if and (and .Values.ingress.enabled .Values.ingress.tls.enabled) (not .Values.ingress.tls.secretName) -}}
-    {{- printf "true" -}}
-  {{- else -}}
-    {{- printf "false" -}}
-  {{- end -}}
+{{- printf "false" -}}
 {{- end -}}
 
 {{- define "harbor.notaryServiceName" -}}
