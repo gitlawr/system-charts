@@ -44,6 +44,12 @@ spec:
             value: "redis"
         ports:
         - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
         volumeMounts:
         - name: ui-config
           mountPath: /etc/ui/app.conf
