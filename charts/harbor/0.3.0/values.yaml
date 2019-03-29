@@ -8,13 +8,13 @@ persistence:
 # Usually, if ingress is enabled, the domain should be the value of
 # ingress.hosts.core .
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
-externalURL: https://harbor.lawr.ink
+externalURL: https://rancher.my.org
 
 ingress:
   enabled: true
   hosts:
-    core: harbor.lawr.ink
-    notary: notary.lawr.ink
+    core: rancher.my.org
+    notary: rancher.my.org
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -29,6 +29,19 @@ ingress:
     # be generated automatically by the chart if leave it empty
     secretName: ""
 
+nginx:
+  enabled: true
+  image:
+    repository: nginx
+    tag: 1.14.2
+    pullPolicy: *image_pull_policy
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.

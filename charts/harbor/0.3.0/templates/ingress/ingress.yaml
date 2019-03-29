@@ -24,17 +24,25 @@ spec:
   - host: {{ .Values.ingress.hosts.core }}
     http:
       paths:
-      - path: /
+      - path: /v2
         backend:
           serviceName: {{ template "harbor.fullname" . }}-ui
           servicePort: 80
-  {{- if .Values.notary.enabled }}
-  - host: {{ .Values.ingress.hosts.notary }}
-    http:
-      paths:
-      - path: /
+      - path: /service/token
         backend:
-          serviceName: {{ template "harbor.notaryServiceName" . }}
-          servicePort: 4443
-  {{- end }}
+          serviceName: {{ template "harbor.fullname" . }}-ui
+          servicePort: 80
+      - path: /registry
+        backend:
+          serviceName: {{ template "harbor.fullname" . }}-nginx
+          servicePort: 80
+  # {{- if .Values.notary.enabled }}
+  # - host: {{ .Values.ingress.hosts.notary }}
+  #   http:
+  #     paths:
+  #     - path: /registry
+  #       backend:
+  #         serviceName: {{ template "harbor.notaryServiceName" . }}
+  #         servicePort: 4443
+  # {{- end }}
 {{- end }}
