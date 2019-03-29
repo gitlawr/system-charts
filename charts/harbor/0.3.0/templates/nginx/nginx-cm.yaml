@@ -20,7 +20,7 @@ data:
             return 302 /registry/;
         }
         location /registry/ {
-            proxy_pass {{ template "harbor.fullname" . }}-ui/; 
+            proxy_pass http://{{ template "harbor.fullname" . }}-ui/; 
             sub_filter_types *;
             sub_filter '<base href="/">' '<base href="/registry">';
             sub_filter '"/static/' '"/registry/static/';
