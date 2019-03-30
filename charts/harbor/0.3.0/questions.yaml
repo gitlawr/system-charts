@@ -373,19 +373,10 @@ questions:
 # redis
 - variable: redis.enabled
   default: true
-  description: "Deploy a redis-HA server as part of this deployment, or set to false and configure an external redis service."
+  description: "Deploy a redis server as part of this deployment, or set to false and configure an external redis service."
   type: boolean
   label: Install Redis
   group: "Redis Settings"
-- variable: redis.cluster.slaveCount
-  required: true
-  default: 1
-  min: 1
-  max: 9
-  type: int
-  label: Slave Replicas
-  group: "Redis Settings"
-  show_if: "redis.enabled=true"
 - variable: redis.master.persistence.enabled
   default: false
   description: "Enable persistent volume for Redis"
