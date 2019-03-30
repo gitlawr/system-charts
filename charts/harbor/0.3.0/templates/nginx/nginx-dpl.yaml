@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+        image: {{ template "system_default_registry" . }}{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
         imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
         resources:
 {{ toYaml .Values.nginx.resources | indent 10 }}

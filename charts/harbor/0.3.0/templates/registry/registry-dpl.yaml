@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: registry
-        image: {{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}
+        image: {{ template "system_default_registry" . }}{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}
         imagePullPolicy: {{ .Values.registry.image.pullPolicy }}
         resources:
 {{ toYaml .Values.registry.resources | indent 10 }}

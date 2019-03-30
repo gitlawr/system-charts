@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: jobservice
-        image: {{ .Values.jobservice.image.repository }}:{{ .Values.jobservice.image.tag }}
+        image: {{ template "system_default_registry" . }}{{ .Values.jobservice.image.repository }}:{{ .Values.jobservice.image.tag }}
         imagePullPolicy: {{ .Values.jobservice.image.pullPolicy }}
         resources:
 {{ toYaml .Values.jobservice.resources | indent 10 }}

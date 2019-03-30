@@ -296,3 +296,6 @@ notary:
 # - ingress (default)
 # - external
 tls: ingress
+
+global:
+  systemDefaultRegistry: ""
