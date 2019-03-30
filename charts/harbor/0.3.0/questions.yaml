@@ -35,7 +35,7 @@ questions:
   type: string
   label: The External URL for Harbor Core Service
   group: "Expose Service Options"
-- variable: expose.ingress.hosts.core
+- variable: ingress.hosts.core
   required: true
   default: "rancher.my.org"
   description: "The host of Harbor core service in ingress rule"
