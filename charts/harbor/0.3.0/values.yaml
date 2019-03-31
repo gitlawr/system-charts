@@ -92,6 +92,8 @@ externalURL: https://rancher.my.org
 # "swift" or "oss". Set it in the "imageChartStorage" section
 persistence:
   enabled: false
+  # Default storage class for all services, including registry, chartmuseum, job service, postgresql and redis, if they are enabled.
+  storageClass: ""
   # Setting it to "keep" to avoid removing PVCs during a helm delete 
   # operation. Leaving it empty will delete PVCs after the chart deleted
   resourcePolicy: "keep"

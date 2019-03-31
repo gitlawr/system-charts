@@ -46,7 +46,7 @@ spec:
           servicePort: 80
       - path: /registry
         backend:
-          serviceName: {{ template "harbor.portal" . }}
+          serviceName: {{ template "harbor.proxy" . }}
           servicePort: 80
       # - path: /
       #   backend:
