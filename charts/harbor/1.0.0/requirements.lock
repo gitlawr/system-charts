@@ -1,0 +1,9 @@
+dependencies:
+- name: redis
+  repository: file://./dependency_charts/redis/
+  version: 6.1.4
+- name: postgresql
+  repository: file://./dependency_charts/postgresql/
+  version: 3.11.7
+digest: sha256:8ddab7415f6277adef6cb6668cb08864b3803d0de6c8e554cf406bfcb4a9c00f
+generated: 2019-03-11T17:12:55.145322+08:00
