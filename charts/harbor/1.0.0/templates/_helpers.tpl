@@ -284,6 +284,10 @@ host:port,pool_size,password
   {{- printf "%s-cert" (include "harbor.fullname" .) -}}
 {{- end -}}
 
+{{- define "harbor.proxy" -}}
+  {{- printf "%s-proxy" (include "harbor.fullname" .) -}}
+{{- end -}}
+
 {{- define "harbor.externalURL" -}}
     {{- if eq .Values.expose.type "ingress" }}
       {{- printf "https://%s" .Values.expose.ingress.hosts.core -}}

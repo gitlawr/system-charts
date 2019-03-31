@@ -23,8 +23,8 @@ expose:
     notarySecretName: ""
   ingress:
     hosts:
-      core: core.harbor.domain
-      notary: notary.harbor.domain
+      core: rancher.my.org
+      notary: rancher.my.org
     annotations:
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -81,7 +81,7 @@ expose:
 # 
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
 # externalURL: https://core.harbor.domain
-externalURL: https://192.168.99.100:30003
+externalURL: https://rancher.my.org
 
 # The persistence is enabled by default and a default StorageClass
 # is needed in the k8s cluster to provision volumes dynamicly. 
@@ -207,6 +207,21 @@ logLevel: debug
 harborAdminPassword: "harbor12345"
 # The secret key used for encryption. Must be a string of 16 chars.
 secretKey: "add-your-secret0"
+
+# nginx proxy adapter for global registry
+proxy:
+  enabled: true
+  image:
+    repository: nginx
+    tag: 1.14.2
+    pullPolicy: IfNotPresent
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 # If expose the service via "ingress", the Nginx will not be used
 nginx:

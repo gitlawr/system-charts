@@ -1,0 +1,42 @@
+{{ if .Values.proxy.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "harbor.proxy" . }}
+  labels:
+{{ include "harbor.labels" . | indent 4 }}
+    component: proxy
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+        location = /registry {
+            return 302 /registry/;
+        }
+        location /registry/ {
+            proxy_pass http://{{ template "harbor.portal" . }}/; 
+            sub_filter_types *;
+            sub_filter '<base href="/">' '<base href="/registry">';
+            sub_filter '"/static/' '"/registry/static/';
+            sub_filter '"../static/' '"/registry/static/';
+            sub_filter '"/api/' '"/registry/api/';
+            sub_filter '"/login"' '"/registry/login"';
+            sub_filter '"/log_out"' '"/registry/log_out"';
+            sub_filter '"/userExists"' '"/registry/userExists"';
+            sub_filter '"/reset"' '"/registry/reset"';
+            sub_filter 'href="favicon.ico' 'href="/registry/favicon.ico';
+            sub_filter '"i18n/lang/"' '"/registry/i18n/lang/"';
+            sub_filter_once off;
+            proxy_set_header Accept-Encoding "";
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+{{ end }}
