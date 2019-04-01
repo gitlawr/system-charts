@@ -44,7 +44,9 @@ data:
         sub_filter '<base href="/">' '<base href="/registry">';
         sub_filter 'href="favicon.ico' 'href="/registry/favicon.ico';
         sub_filter 'href="styles' 'href="/registry/styles';
-        sub_filter 'src="images/' 'src="/registry/images/';
+        sub_filter '"images/harbor-logo.svg"' '"/registry/images/harbor-logo.svg"';
+        sub_filter '"/images/helm-gray.svg"' '"/registry/images/helm-gray.svg"';
+        
         sub_filter 'src="main' 'src="/registry/main';
         sub_filter 'src="runtime' 'src="/registry/runtime';
         sub_filter 'src="scripts' 'src="/registry/scripts';
