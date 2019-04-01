@@ -18,29 +18,47 @@ data:
         location = /registry {
             return 302 /registry/;
         }
+        location  /registry/service/ {
+            proxy_pass http://{{ template "harbor.core" . }}/service/; 
+            include filters.conf;
+        }
+        location  /registry/api/ {
+            proxy_pass http://{{ template "harbor.core" . }}/api/; 
+            include filters.conf;
+        }
+        location  /registry/chartrepo/ {
+            proxy_pass http://{{ template "harbor.core" . }}/chartrepo/; 
+            include filters.conf;
+        }
+        location  /registry/c/ {
+            proxy_pass http://{{ template "harbor.core" . }}/c/; 
+            include filters.conf;
+        }
         location /registry/ {
             proxy_pass http://{{ template "harbor.portal" . }}/; 
-            sub_filter_types *;
-            sub_filter '<base href="/">' '<base href="/registry">';
-            sub_filter 'href="styles' 'href="/registry/styles';
-            sub_filter 'src="main' 'src="/registry/main';
-            sub_filter 'src="runtime' 'src="/registry/runtime';
-            sub_filter 'src="scripts' 'src="/registry/scripts';
-            sub_filter '"/static/' '"/registry/static/';
-            sub_filter '"../static/' '"/registry/static/';
-            sub_filter '"/api/' '"/registry/api/';
-            sub_filter '"/login"' '"/registry/login"';
-            sub_filter '"/log_out"' '"/registry/log_out"';
-            sub_filter '"/userExists"' '"/registry/userExists"';
-            sub_filter '"/reset"' '"/registry/reset"';
-            sub_filter 'href="favicon.ico' 'href="/registry/favicon.ico';
-            sub_filter '"i18n/lang/"' '"/registry/i18n/lang/"';
-            sub_filter_once off;
-            proxy_set_header Accept-Encoding "";
+            include filters.conf;
         }
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
             root   /usr/share/nginx/html;
         }
     }
+  filters.conf: |
+        sub_filter_types *;
+        sub_filter '<base href="/">' '<base href="/registry">';
+        sub_filter 'href="styles' 'href="/registry/styles';
+        sub_filter 'src="main' 'src="/registry/main';
+        sub_filter 'src="runtime' 'src="/registry/runtime';
+        sub_filter 'src="scripts' 'src="/registry/scripts';
+        sub_filter '"/static/' '"/registry/static/';
+        sub_filter '"../static/' '"/registry/static/';
+        sub_filter '"/api/' '"/registry/api/';
+        sub_filter '"/login"' '"/registry/login"';
+        sub_filter '"/log_out"' '"/registry/log_out"';
+        sub_filter '"/userExists"' '"/registry/userExists"';
+        sub_filter '"/reset"' '"/registry/reset"';
+        sub_filter 'href="favicon.ico' 'href="/registry/favicon.ico';
+        sub_filter '"i18n/lang/"' '"/registry/i18n/lang/"';
+        sub_filter_once off;
+        proxy_set_header Accept-Encoding "";
 {{ end }}

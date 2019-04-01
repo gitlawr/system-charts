@@ -30,6 +30,10 @@ spec:
         - name: nginx-config
           mountPath: /etc/nginx/conf.d
           readOnly: true
+        - mountPath: /etc/nginx/filters.conf
+          name: filter-config
+          subPath: filters.conf
+          readOnly: true
       volumes:
       - name: nginx-config
         configMap:
@@ -37,6 +41,12 @@ spec:
           items:
             - key: default.conf
               path: default.conf
+      - name: filter-config
+        configMap:
+          name: "{{ template "harbor.proxy" . }}"
+          items:
+          - key: filters.conf
+            path: filters.conf
     {{- with .Values.proxy.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
