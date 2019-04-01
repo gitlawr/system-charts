@@ -152,7 +152,7 @@ data:
     auth:
       token:
         issuer: harbor-token-issuer
-        realm: "{{ template "harbor.externalURL" . }}/service/token"
+        realm: "{{ template "harbor.externalURL" . }}/registry/service/token"
         rootcertbundle: /etc/registry/root.crt
         service: harbor-registry
     validation:
