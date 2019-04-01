@@ -211,6 +211,22 @@ harborAdminPassword: "Harbor12345"
 # The secret key used for encryption. Must be a string of 16 chars.
 secretKey: "not-a-secure-key"
 
+
+# nginx proxy adapter for global registry
+proxy:
+  enabled: true
+  image:
+    repository: nginx
+    tag: 1.14.2
+    pullPolicy: IfNotPresent
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
 # If expose the service via "ingress", the Nginx will not be used
 nginx:
   image:

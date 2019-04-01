@@ -44,6 +44,10 @@ spec:
         backend:
           serviceName: {{ template "harbor.core" . }}
           servicePort: 80
+      - path: /registry/
+        backend:
+          serviceName: {{ template "harbor.proxy" . }}
+          servicePort: 80
     {{- if $ingress.host }}
     host: {{ $ingress.host }}
     {{- end }}
