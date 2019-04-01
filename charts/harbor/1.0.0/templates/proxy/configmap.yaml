@@ -30,6 +30,9 @@ data:
         location  /registry/c/ {
             proxy_pass http://{{ template "harbor.core" . }}/c/; 
         }
+        location  /registry/notary/ {
+            proxy_pass http://{{ template "harbor.notary-server" . }}:4443/; 
+        }
         location /registry/ {
             proxy_pass http://{{ template "harbor.portal" . }}/; 
             include filters.conf;
