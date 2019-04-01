@@ -64,6 +64,7 @@ data:
         sub_filter '"/api/' '"/registry/api/';
         sub_filter '"/service/' '"/registry/service/';
         sub_filter '"/chartrepo/' '"/registry/chartrepo/';
+        sub_filter '"/swagger.json"' '"/registry/swagger.json"';
         sub_filter '"i18n/lang/"' '"/registry/i18n/lang/"';
         sub_filter_once off;
         proxy_set_header Accept-Encoding "";
