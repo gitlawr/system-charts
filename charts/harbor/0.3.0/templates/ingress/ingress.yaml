@@ -20,30 +20,10 @@ spec:
   rules:
   - http:
       paths:
-      # - path: /
-      #   backend:
-      #     serviceName: {{ template "harbor.portal" . }}
-      #     servicePort: 80
-      # - path: /api/
-      #   backend:
-      #     serviceName: {{ template "harbor.core" . }}
-      #     servicePort: 80
-      # - path: /service/
-      #   backend:
-      #     serviceName: {{ template "harbor.core" . }}
-      #     servicePort: 80
       - path: /v2/
         backend:
           serviceName: {{ template "harbor.core" . }}
           servicePort: 80
-      # - path: /chartrepo/
-      #   backend:
-      #     serviceName: {{ template "harbor.core" . }}
-      #     servicePort: 80
-      # - path: /c/
-      #   backend:
-      #     serviceName: {{ template "harbor.core" . }}
-      #     servicePort: 80
       - path: /registry/
         backend:
           serviceName: {{ template "harbor.proxy" . }}
