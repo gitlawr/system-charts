@@ -310,7 +310,7 @@ registry:
   registry:
     image:
       repository: goharbor/registry-photon
-      tag: v1.7.4
+      tag: v2.6.2-v1.7.4
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -340,7 +340,7 @@ chartmuseum:
   enabled: true
   image:
     repository: goharbor/chartmuseum-photon
-    tag: v1.7.4
+    tag: v0.8.1-v1.7.4
   replicas: 1
   # resources:
   #  requests:
@@ -356,7 +356,7 @@ clair:
   enabled: true
   image:
     repository: goharbor/clair-photon
-    tag: v1.7.4
+    tag: v2.0.7-v1.7.4
   replicas: 1
   # The http(s) proxy used to update vulnerabilities database from internet
   httpProxy:
@@ -379,7 +379,7 @@ notary:
   server:
     image:
       repository: goharbor/notary-server-photon
-      tag: v1.7.4
+      tag: v0.6.1-v1.7.4
     replicas: 1
     # resources:
     #  requests:
@@ -388,7 +388,7 @@ notary:
   signer:
     image:
       repository: goharbor/notary-signer-photon
-      tag: v1.7.4
+      tag: v0.6.1-v1.7.4
     replicas: 1
     # resources:
     #  requests:
