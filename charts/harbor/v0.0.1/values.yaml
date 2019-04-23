@@ -210,8 +210,8 @@ secretKey: "not-a-secure-key"
 # nginx proxy adapter for global registry, it is used when globalRegistryMode is true.
 proxy:
   image:
-    repository: library/nginx
-    tag: 1.14.2
+    repository: lawr/openresty
+    tag: alpine
     pullPolicy: IfNotPresent
     resources: 
       requests:
@@ -368,7 +368,13 @@ registry:
   # If a secret key is not specified, Helm will generate one.
   # Must be a string of 16 chars.
   secret: ""
-
+  proxyCache:
+  - remoteurl: https://registry-1.docker.io
+    username: 
+    password: 
+  - remoteurl: https://gcr.io
+    username: 
+    password: 
 chartmuseum:
   enabled: false
   image:

@@ -1,3 +1,4 @@
+{{- $root := . }}
 {{ if .Values.globalRegistryMode }}
 apiVersion: v1
 kind: ConfigMap
@@ -8,9 +9,22 @@ metadata:
     component: proxy
 data:
   default.conf: |
+    upstream registries {
+        server {{ template "harbor.core" . }};
+        {{ if ne (len .Values.registry.proxyCache) 0 }}
+        {{- range $index, $proxyCache := .Values.registry.proxyCache }}
+        server {{ template "harbor.registry" $root }}-{{ $index }}:5000 backup;
+        {{- end }}
+        {{ end }}
+    }
+
     server {
         listen       80;
         server_name  localhost;
+
+        # disable any limits to avoid HTTP 413 for large image uploads
+        client_max_body_size 0;
+
         location / {
             root   /usr/share/nginx/html;
             index  index.html index.htm;
@@ -41,6 +55,26 @@ data:
             proxy_pass http://{{ template "harbor.portal" . }}/; 
             include filters.conf;
         }
+
+        location /cache_pull_notifications {
+            include sub_cache_notifications.conf;
+            proxy_pass http://{{ template "harbor.core" . }}/service/notifications/; 
+        }
+
+        location ~* /v2/.*/manifests/[^/]*$ {
+            proxy_pass http://registries;
+            proxy_next_upstream http_404;
+        }
+
+        location ~* /v2/.*/blobs/[^/]*$ {
+            proxy_pass http://registries;
+            proxy_next_upstream http_404;
+        }
+
+        location /v2 {
+            proxy_pass http://{{ template "harbor.core" . }};
+        }
+
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
             root   /usr/share/nginx/html;
@@ -80,4 +114,33 @@ data:
 
         sub_filter_once off;
         proxy_set_header Accept-Encoding "";
+  sub_cache_notifications.conf: |
+        # Hijack cache registry's pull event and notify Harbor as a push event
+        rewrite_by_lua '
+        ngx.req.read_body()
+        local req = ngx.req.get_body_data()
+
+        local function rewrite_action()
+            local cjson = require "cjson"
+            local json = cjson.decode(req)
+            for i, v in ipairs(json.events) do
+              if(v.target.tag ~= nil and v.target.tag ~= "")
+              then
+                v.action = "push"
+                v.target.mediaType = "application/vnd.docker.distribution.manifest.v2+json"
+              else
+                v.target.mediaType = "application/octet-stream"
+              end
+            end
+            newreq = cjson.encode(json)
+            ngx.req.set_body_data(newreq)
+        end
+        local status, retval = pcall(rewrite_action)
+        if not status then
+            ngx.req.set_body_data(req)
+        end
+        -- Put some delay to wait before the manifest is ready
+        ngx.sleep(1)
+        ';
+
 {{ end }}

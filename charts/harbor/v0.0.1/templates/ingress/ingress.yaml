@@ -26,7 +26,7 @@ spec:
       paths:
       - path: /v2/
         backend:
-          serviceName: {{ template "harbor.core" . }}
+          serviceName: {{ template "harbor.proxy" . }}
           servicePort: 80
       - path: /api/projects
         backend:
