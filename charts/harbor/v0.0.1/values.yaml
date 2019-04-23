@@ -211,8 +211,8 @@ secretKey: "not-a-secure-key"
 proxy:
   enabled: true
   image:
-    repository: library/nginx
-    tag: 1.14.2
+    repository: lawr/openresty
+    tag: alpine
     pullPolicy: IfNotPresent
   # resources:
   #  requests:
@@ -366,7 +366,10 @@ registry:
   # If a secret key is not specified, Helm will generate one.
   # Must be a string of 16 chars.
   secret: ""
-
+  proxyCache:
+  - remoteurl: https://registry-1.docker.io
+    username: abc
+    password: abc
 chartmuseum:
   enabled: false
   image:

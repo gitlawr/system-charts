@@ -1,0 +1,117 @@
+{{- $root := . }}
+{{ if ne (len .Values.registry.proxyCache) 0 }}
+{{- range $index, $proxyCache := .Values.registry.proxyCache }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "harbor.registry" $root }}-{{ $index }}"
+  labels:
+{{ include "harbor.labels" $root | indent 4 }}
+    component: registry-proxy
+    index: "{{ $index }}"
+spec:
+  replicas: {{ $root.Values.registry.replicas }}
+  selector:
+    matchLabels:
+{{ include "harbor.matchLabels" $root | indent 6 }}
+      component: registry-proxy
+  template:
+    metadata:
+      labels:
+{{ include "harbor.labels" $root | indent 8 }}
+        component: registry-proxy
+      annotations:
+        checksum/configmap: {{ include (print $root.Template.BasePath "/registry/registry-cm.yaml") $root | sha256sum }}
+        checksum/secret: {{ include (print $root.Template.BasePath "/registry/registry-secret.yaml") $root | sha256sum }}
+        checksum/secret-jobservice: {{ include (print $root.Template.BasePath "/jobservice/jobservice-secrets.yaml") $root | sha256sum }}
+        checksum/secret-core: {{ include (print $root.Template.BasePath "/core/core-secret.yaml") $root | sha256sum }}
+{{- if $root.Values.registry.podAnnotations }}
+{{ toYaml $root.Values.registry.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: registry
+        image: {{ $root.Values.registry.registry.image.repository }}:{{ $root.Values.registry.registry.image.tag }}
+        imagePullPolicy: {{ $root.Values.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 1
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 1
+          periodSeconds: 10
+{{- if $root.Values.registry.registry.resources }}
+        resources:
+{{ toYaml $root.Values.registry.registry.resources | indent 10 }}
+{{- end }}
+        args: ["serve", "/etc/registry/config.yml"]
+        envFrom:
+        - secretRef:
+            name: "{{ template "harbor.registry" $root }}"
+        ports:
+        - containerPort: 5000
+        - containerPort: 5001
+        volumeMounts:
+        - name: registry-data
+          mountPath: {{ $root.Values.imageChartStorage.filesystem.rootdirectory }}
+          subPath: {{ $root.Values.persistence.persistentVolumeClaim.registry.subPath }}
+        - name: registry-root-certificate
+          mountPath: /etc/registry/root.crt
+          subPath: tokenServiceRootCertBundle
+        - name: registry-config
+          mountPath: /etc/registry/config.yml
+          subPath: config.yml
+        {{- if and (eq $root.Values.persistence.type "storageClass") (eq $root.Values.imageChartStorage.type "gcs") }}
+        - name: gcs-key
+          mountPath: /etc/registry/gcs-key.json
+          subPath: gcs-key.json
+        {{- end }}
+      volumes:
+      - name: registry-root-certificate
+        secret:
+          {{- if $root.Values.core.secretName }}
+          secretName: {{ $root.Values.core.secretName }}
+          {{- else }}
+          secretName: {{ template "harbor.core" $root }}
+          {{- end }}
+      - name: registry-config
+        configMap:
+          name: "{{ template "harbor.registry" $root }}-{{ $index }}"
+      - name: registry-data
+      {{- if and (eq $root.Values.persistence.type "storageClass") (eq $root.Values.imageChartStorage.type "filesystem") }}
+        persistentVolumeClaim:
+          claimName: {{ $root.Values.persistence.persistentVolumeClaim.registry.existingClaim | default (include "harbor.registry" $root) }}
+      {{- else if and (eq $root.Values.persistence.type "hostPath") (eq $root.Values.imageChartStorage.type "filesystem") }}
+        hostPath:
+          path: "{{ $root.Values.persistence.hostPath }}/registry"
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- if and (eq $root.Values.persistence.type "storageClass") (eq $root.Values.imageChartStorage.type "gcs") }}
+      - name: gcs-key
+        secret:
+          secretName: {{ template "harbor.registry" $root }}
+          items:
+            - key: GCS_KEY_DATA
+              path: gcs-key.json
+      {{- end }}
+    {{- with $root.Values.registry.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $root.Values.registry.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $root.Values.registry.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
+{{ end }}

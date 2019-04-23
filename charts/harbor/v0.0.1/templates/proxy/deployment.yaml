@@ -30,9 +30,13 @@ spec:
         - name: nginx-config
           mountPath: /etc/nginx/conf.d
           readOnly: true
-        - mountPath: /etc/nginx/filters.conf
+        - mountPath: /usr/local/openresty/nginx/conf/filters.conf
           name: filter-config
           subPath: filters.conf
+          readOnly: true
+        - mountPath: /usr/local/openresty/nginx/conf/sub_cache_notifications.conf
+          name: sub-cache-notifications-config
+          subPath: sub_cache_notifications.conf
           readOnly: true
       volumes:
       - name: nginx-config
@@ -47,6 +51,12 @@ spec:
           items:
           - key: filters.conf
             path: filters.conf
+      - name: sub-cache-notifications-config
+        configMap:
+          name: "{{ template "harbor.proxy" . }}"
+          items:
+          - key: sub_cache_notifications.conf
+            path: sub_cache_notifications.conf
     {{- with .Values.proxy.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
