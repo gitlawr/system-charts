@@ -13,7 +13,7 @@ data:
         server {{ template "harbor.core" . }};
         {{ if ne (len .Values.registry.proxyCache) 0 }}
         {{- range $index, $proxyCache := .Values.registry.proxyCache }}
-        server {{ template "harbor.registry" $root }}-{{ $index }} backup;
+        server {{ template "harbor.registry" $root }}-{{ $index }}:5000 backup;
         {{- end }}
         {{ end }}
     }

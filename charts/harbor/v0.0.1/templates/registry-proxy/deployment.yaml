@@ -16,11 +16,13 @@ spec:
     matchLabels:
 {{ include "harbor.matchLabels" $root | indent 6 }}
       component: registry-proxy
+      index: "{{ $index }}"
   template:
     metadata:
       labels:
 {{ include "harbor.labels" $root | indent 8 }}
         component: registry-proxy
+        index: "{{ $index }}"
       annotations:
         checksum/configmap: {{ include (print $root.Template.BasePath "/registry/registry-cm.yaml") $root | sha256sum }}
         checksum/secret: {{ include (print $root.Template.BasePath "/registry/registry-secret.yaml") $root | sha256sum }}

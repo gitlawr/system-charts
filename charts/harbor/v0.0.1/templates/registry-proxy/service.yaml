@@ -10,8 +10,6 @@ spec:
   ports:
     - name: registry
       port: 5000
-    - name: controller
-      port: 8080
   selector:
 {{ include "harbor.matchLabels" $ | indent 4 }}
     component: registry-proxy

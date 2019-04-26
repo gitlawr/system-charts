@@ -175,7 +175,11 @@ data:
           backoff: 1s
     proxy:
       remoteurl: {{ $proxyCache.remoteurl }}
+      {{- if $proxyCache.username }}
       username: {{ $proxyCache.username }}
+      {{- end }}
+      {{- if $proxyCache.password }}
       password: {{ $proxyCache.password }}
+      {{- end }}
 {{- end }}
 {{ end }}
