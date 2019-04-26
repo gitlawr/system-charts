@@ -110,10 +110,28 @@ data:
         proxy_set_header Accept-Encoding "";
   sub_cache_notifications.conf: |
         rewrite_by_lua '
-                ngx.req.read_body()
-                local req = ngx.req.get_body_data()
-                local newreq, n, err = ngx.re.gsub(req, \'"action": "pull"\', \'"action": "push"\')
-                ngx.req.set_body_data(newreq)
+        ngx.req.read_body()
+        local req = ngx.req.get_body_data()
+
+        local function rewrite_action()
+            local cjson = require "cjson"
+            local json = cjson.decode(req)
+            for i, v in ipairs(json.events) do
+              if(v.target.tag ~= nil and v.target.tag ~= "")
+              then
+                v.action = "push"
+                v.target.mediaType = "application/vnd.docker.distribution.manifest.v2+json"
+              else
+                v.target.mediaType = "application/octet-stream"
+              end
+            end
+            newreq = cjson.encode(json)
+            ngx.req.set_body_data(newreq)
+        end
+        local status, retval = pcall(rewrite_action)
+        if not status then
+            ngx.req.set_body_data(req)
+        end
         ';
 
 {{ end }}
