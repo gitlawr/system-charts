@@ -368,8 +368,8 @@ registry:
   secret: ""
   proxyCache:
   - remoteurl: https://registry-1.docker.io
-    username: abc
-    password: abc
+    username: 
+    password: 
 chartmuseum:
   enabled: false
   image:
