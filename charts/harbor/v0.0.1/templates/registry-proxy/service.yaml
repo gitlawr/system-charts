@@ -1,5 +1,6 @@
 {{ if ne (len .Values.registry.proxyCache) 0 }}
 {{- range $index, $proxyCache := .Values.registry.proxyCache }}
+---
 apiVersion: v1
 kind: Service
 metadata:
