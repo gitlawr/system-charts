@@ -370,6 +370,9 @@ registry:
   - remoteurl: https://registry-1.docker.io
     username: 
     password: 
+  - remoteurl: https://gcr.io
+    username: 
+    password: 
 chartmuseum:
   enabled: false
   image:
