@@ -21,6 +21,10 @@ data:
     server {
         listen       80;
         server_name  localhost;
+
+        # disable any limits to avoid HTTP 413 for large image uploads
+        client_max_body_size 0;
+
         location / {
             root   /usr/share/nginx/html;
             index  index.html index.htm;
@@ -57,16 +61,13 @@ data:
             proxy_pass http://{{ template "harbor.core" . }}/service/notifications/; 
         }
 
-        location /v2 {
+        location ~* /v2/.*/manifests/[^/]*$ {
             proxy_pass http://registries;
             proxy_next_upstream http_404;
+        }
 
-            # add_header 'Docker-Distribution-Api-Version' $docker_distribution_api_version always;
-            # proxy_set_header  Host              $http_host;   # required for docker client's sake
-            # proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
-            # proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-            # proxy_set_header  X-Forwarded-Proto $scheme;
-            # proxy_read_timeout                  900;
+        location /v2 {
+            proxy_pass http://{{ template "harbor.core" . }};
         }
 
         error_page   500 502 503 504  /50x.html;
@@ -109,6 +110,7 @@ data:
         sub_filter_once off;
         proxy_set_header Accept-Encoding "";
   sub_cache_notifications.conf: |
+        # Hijack cache registry's pull event and notify Harbor as a push event
         rewrite_by_lua '
         ngx.req.read_body()
         local req = ngx.req.get_body_data()
