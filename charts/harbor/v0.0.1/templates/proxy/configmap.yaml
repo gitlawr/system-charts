@@ -75,7 +75,7 @@ data:
         }
     }
   filters.conf: |
-        sub_filter_types text/html application/javascript;
+        sub_filter_types application/javascript;
 
         sub_filter 'src="main' 'src="/registry/main';
         sub_filter 'src="runtime' 'src="/registry/runtime';
@@ -132,6 +132,8 @@ data:
         if not status then
             ngx.req.set_body_data(req)
         end
+        -- Put some delay to wait before the manifest is ready
+        ngx.sleep(1)
         ';
 
 {{ end }}
