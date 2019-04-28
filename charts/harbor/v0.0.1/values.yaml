@@ -76,7 +76,7 @@ externalURL: https://harbor.local
 # "swift" or "oss". Set it in the "imageChartStorage" section
 persistence:
   #emptyDir/hostPath/storageClass
-  type: emptyDir
+  type: storageClass
   # Setting it to "keep" to avoid removing PVCs during a helm delete
   # operation. Leaving it empty will delete PVCs after the chart deleted
   resourcePolicy: "keep"
