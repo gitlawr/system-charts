@@ -79,9 +79,7 @@ persistence:
   # Setting it to "keep" to avoid removing PVCs during a helm delete
   # operation. Leaving it empty will delete PVCs after the chart deleted
   resourcePolicy: "keep"
-  hostPath: /var/lib/harbor
   persistentVolumeClaim:
-    storageClass: ""
     registry:
       # Use the existing PVC which must be created manually before bound, 
       # and specify the "subPath" if the PVC is shared with other components

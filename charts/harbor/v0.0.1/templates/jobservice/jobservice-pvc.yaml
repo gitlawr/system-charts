@@ -24,8 +24,6 @@ spec:
     {{- else }}
   storageClassName: {{ $jobservice.storageClass }}
     {{- end }}
-  {{- else if .Values.persistence.persistentVolumeClaim.storageClass }}
-  storageClassName: {{ .Values.persistence.persistentVolumeClaim.storageClass }}
   {{- end }}
 {{- end }}
 {{- end }}

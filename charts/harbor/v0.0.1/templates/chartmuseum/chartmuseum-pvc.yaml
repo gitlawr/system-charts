@@ -25,8 +25,6 @@ spec:
     {{- else }}
   storageClassName: {{ $chartmuseum.storageClass }}
     {{- end }}
-  {{- else if .Values.persistence.persistentVolumeClaim.storageClass }}
-  storageClassName: {{ .Values.persistence.persistentVolumeClaim.storageClass }}
   {{- end }}
 {{- end }}
 {{- end }}
