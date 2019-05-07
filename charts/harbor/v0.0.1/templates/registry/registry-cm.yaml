@@ -152,7 +152,7 @@ data:
     auth:
       token:
         issuer: harbor-token-issuer
-        {{- if eq .Values.expose.tls.type "rancher" }}
+        {{- if .Values.globalRegistryMode }}
         realm: "{{ template "harbor.externalURL" . }}/registry/service/token"
         {{- else }}
         realm: "{{ template "harbor.externalURL" . }}/service/token"

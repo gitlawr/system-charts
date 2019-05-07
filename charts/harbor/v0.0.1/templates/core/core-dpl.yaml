@@ -68,7 +68,7 @@ spec:
         - name: token-service-private-key
           mountPath: /etc/core/private_key.pem
           subPath: tokenServicePrivateKey
-        {{- if and (ne .Values.expose.tls.type "secretName") (ne .Values.expose.tls.type "custom CA") }}
+        {{- if eq (include "harbor.autoGenCert" .) "true" }}
         - name: ca-download
           mountPath: /etc/core/ca/ca.crt
           subPath: ca.crt
@@ -98,12 +98,12 @@ spec:
           {{- end }}
       - name: ca-download
         secret:
-        {{- if eq .Values.expose.tls.type "rancher" }}
+        {{- if .Values.globalRegistryMode }}
           secretName: "tls-rancher"
           items:
             - key: tls.crt
               path: ca.crt
-        {{- else if and (eq .Values.expose.type "ingress") (ne .Values.expose.tls.type "secretName") }}
+        {{- else if eq (include "harbor.autoGenCert" .) "true" }}
           secretName: {{ template "harbor.ingress.core" . }}
           items:
             - key: ca.crt

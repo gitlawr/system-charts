@@ -1,6 +1,6 @@
+{{- if not .Values.globalRegistryMode }}
 {{- if .Values.notary.enabled }}
 {{- if eq .Values.expose.type "ingress" }}
-{{- if ne .Values.expose.tls.type "rancher" }}
 {{- $ingress := .Values.expose.ingress -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -14,7 +14,7 @@ metadata:
 spec:
   {{- if .Values.expose.tls.enabled }}
   tls:
-  - secretName: {{ template "harbor.certificate-secret" . }}
+  - secretName: {{ .Values.expose.tls.secretName }}
     {{- if $ingress.host }}
     hosts: 
     - {{ $ingress.host }}

@@ -31,12 +31,12 @@ app: "{{ template "harbor.name" . }}"
 {{- end -}}
 
 {{- define "harbor.autoGenCert" -}}
-  {{- if eq .Values.expose.tls.type "secretName" -}}
+  {{- if .Values.globalRegistryMode -}}
     {{- printf "false" -}}
-  {{- else if eq .Values.expose.tls.type "rancher" -}}
-    {{- printf "false" -}}
-  {{- else -}}
+  {{- else if and .Values.expose.tls.enabled (not .Values.expose.tls.secretName) -}}
     {{- printf "true" -}}
+  {{- else -}}
+    {{- printf "false" -}}
   {{- end -}}
 {{- end -}}
 
@@ -284,10 +284,6 @@ host:port,pool_size,password
   {{- printf "%s-ingress-notary" (include "harbor.fullname" .) -}}
 {{- end -}}
 
-{{- define "harbor.cert" -}}
-  {{- printf "%s-cert" (include "harbor.fullname" .) -}}
-{{- end -}}
-
 {{- define "harbor.externalURL" -}}
     {{- if eq .Values.expose.type "ingress" }}
       {{- printf "https://%s" .Values.expose.ingress.host -}}
@@ -298,13 +294,9 @@ host:port,pool_size,password
     {{- end }}
 {{- end -}}
 
-{{- define "harbor.certPath" -}}
-  {{- (include "harbor.externalURL" .) | trimPrefix "https://"  | trimPrefix "http://" -}}
-{{- end -}}
-
 {{/*
-The commmon name used to generate the certificate, it's necessary,
-when the type isn't "ingress" and TLS type is "self-signed x509 certificate"
+The commmon name used to generate the certificate, it's necessary
+when the type is "clusterIP" or "nodePort" and "secretName" is null
 */}}
 {{- define "harbor.tlsCommonName" -}}
   {{- $trimURL := (include "harbor.externalURL" .)  | trimPrefix "https://"  | trimPrefix "http://" -}}
