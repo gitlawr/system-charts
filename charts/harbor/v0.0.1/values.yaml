@@ -213,10 +213,13 @@ proxy:
     repository: library/nginx
     tag: 1.14.2
     pullPolicy: IfNotPresent
-  # resources:
-  #  requests:
-  #    memory: 256Mi
-  #    cpu: 100m
+    resources: 
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      # limits:
+      #   cpu: 50m
+      #   memory: 64Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -227,13 +230,13 @@ nginx:
     repository: goharbor/nginx-photon
     tag: v1.7.5
   replicas: 1
-  resources:
+  resources: 
     requests:
-      cpu: 10m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 64Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -247,11 +250,11 @@ portal:
   replicas: 1
   resources:
     requests:
-      cpu: 10m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -265,11 +268,11 @@ adminserver:
   replicas: 1
   resources:
     requests:
-      cpu: 20m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 10m
+      memory: 20Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -284,10 +287,10 @@ core:
   resources:
     requests:
       cpu: 50m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 256Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -315,11 +318,11 @@ jobservice:
   jobLogger: database
   resources:
     requests:
-      cpu: 20m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 256Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -338,10 +341,10 @@ registry:
     resources:
       requests:
         cpu: 20m
-        memory: 100Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
+        memory: 64Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 256Mi
   controller:
     image:
       repository: goharbor/harbor-registryctl
@@ -349,10 +352,10 @@ registry:
     resources:
       requests:
         cpu: 20m
-        memory: 100Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
+        memory: 64Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
   replicas: 1
   nodeSelector: {}
   tolerations: []
@@ -375,10 +378,10 @@ chartmuseum:
   resources:
     requests:
       cpu: 20m
-      memory: 100Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+      memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 256Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -401,9 +404,9 @@ clair:
     requests:
       cpu: 100m
       memory: 256Mi
-    limits:
-      cpu: 200m
-      memory: 1500Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 1500Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -420,10 +423,10 @@ notary:
     resources:
       requests:
         cpu: 20m
-        memory: 100Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
+        memory: 64Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
   signer:
     image:
       repository: goharbor/notary-signer-photon
@@ -432,10 +435,10 @@ notary:
     resources:
       requests:
         cpu: 20m
-        memory: 100Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi
+        memory: 64Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -459,10 +462,10 @@ database:
       tag: v1.7.5
     # The initial superuser password for internal database
     password: "changeit"
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
+    resources:
+     requests:
+       cpu: 100m
+       memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -487,10 +490,10 @@ redis:
     image:
       repository: goharbor/redis-photon
       tag: v1.7.5
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
+    resources:
+     requests:
+       cpu: 100m
+       memory: 128Mi
     nodeSelector: {}
     tolerations: []
     affinity: {}
