@@ -47,7 +47,7 @@ data:
         {{- if $storage.s3.encrypt }}
         encrypt: {{ $storage.s3.encrypt }}
         {{- end }}
-        {{- if $storage.s3.secure }}
+        {{- if kindIs "bool" $storage.s3.secure }}
         secure: {{ $storage.s3.secure }}
         {{- end }}
         {{- if $storage.s3.v4auth }}
@@ -120,7 +120,7 @@ data:
         {{- if $storage.oss.encrypt }}
         encrypt: {{ $storage.oss.encrypt }}
         {{- end }}
-        {{- if $storage.oss.secure }}
+        {{- if kindIs "bool" $storage.oss.secure }}
         secure: {{ $storage.oss.secure }}
         {{- end }}
         {{- if $storage.oss.chunksize }}
