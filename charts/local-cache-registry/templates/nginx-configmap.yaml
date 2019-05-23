@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  default.conf: |-
+    server {
+        listen       80;
+        server_name  localhost;
+
+        # disable any limits to avoid HTTP 413 for large image uploads
+        client_max_body_size 0;
+
+        location / {
+            proxy_pass http://registry;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+kind: ConfigMap
+metadata:
+  name: nginx-cm
+

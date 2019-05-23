@@ -25,6 +25,10 @@ data:
         # disable any limits to avoid HTTP 413 for large image uploads
         client_max_body_size 0;
 
+        if ($http_user_agent ~ UpstreamClient\(Go-http-client ) {
+            return 302 http://localhost:31677$request_uri;
+        }
+
         location / {
             root   /usr/share/nginx/html;
             index  index.html index.htm;
