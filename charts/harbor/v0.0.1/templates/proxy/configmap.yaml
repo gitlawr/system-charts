@@ -67,12 +67,12 @@ data:
 
         location ~* /v2/.*/manifests/[^/]*$ {
             proxy_pass http://registries;
-            proxy_next_upstream http_404;
+            proxy_next_upstream http_404 http_500;
         }
 
         location ~* /v2/.*/blobs/[^/]*$ {
             proxy_pass http://registries;
-            proxy_next_upstream http_404;
+            proxy_next_upstream http_404 http_500;
         }
 
         location /v2 {
