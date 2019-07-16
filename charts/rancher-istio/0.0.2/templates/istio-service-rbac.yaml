@@ -6,9 +6,19 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["services/proxy"]
-    resourceNames: ["http:kiali-http:80", "http:tracing:80", "http:grafana:80", "http:prometheus-http:80"]
+    resourceNames: ["http:kiali-http:80", "http:tracing:80"]
     verbs: ["get", "watch", "list"]
-
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: cattle-prometheus
+  name: monitoring-service-reader
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["http:access-grafana:80", "http:access-prometheus:80"]
+    verbs: ["get", "watch", "list"]
 ---
 {{- if .Values.global.members }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -25,5 +35,21 @@ subjects:
 roleRef:
   kind: Role
   name: istio-service-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-monitoring-service
+  namespace: cattle-prometheus
+subjects:
+  {{- range $member := .Values.global.members }}
+  - kind: {{ $member.kind }}
+    name: {{ $member.name }}
+    apiGroup: rbac.authorization.k8s.io
+  {{- end }}
+roleRef:
+  kind: Role
+  name: monitoring-service-reader
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
