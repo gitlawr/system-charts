@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "thanos.fullname" . }}-grafana
+  labels:
+    app.kubernetes.io/name: {{ include "thanos.name" . }}
+    helm.sh/chart: {{ include "thanos.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    component: grafana
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "thanos.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      component: grafana
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "thanos.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: grafana
+    spec:
+      containers:
+      - image: grafana/grafana
+        imagePullPolicy: Always
+        name: grafana
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/grafana/provisioning/datasources/datasources.yaml
+          name: vol1
+          subPath: datasources.yaml
+        - mountPath: /etc/grafana/provisioning/dashboards/all.yaml
+          name: vol2
+          subPath: all.yaml
+        - mountPath: /var/lib/grafana/dashboards/dashboard.json
+          name: vol3
+          subPath: dashboard.json
+      volumes:
+      - configMap:
+          items:
+          - key: datasources.yaml
+            path: datasources.yaml
+          name: grafana-configmap
+        name: vol1
+      - configMap:
+          items:
+          - key: all.yaml
+            path: all.yaml
+          name: grafana-configmap
+        name: vol2
+      - configMap:
+          items:
+          - key: dashboard.json
+            path: dashboard.json
+          name: grafana-configmap
+        name: vol3

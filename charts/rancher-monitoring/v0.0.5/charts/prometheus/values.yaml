@@ -75,3 +75,6 @@ additionalAlertManagerConfigs: []
 istioMonitoring:
   enabled: true
   namespace: istio-system
+
+thanos:
+  enabled: false
