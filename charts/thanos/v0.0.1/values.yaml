@@ -42,3 +42,51 @@ rancherHostname: ""
 privateCa: false
 
 token: ""
+
+
+grafana:
+  enabled: false
+  level: cluster
+  apiGroup: "monitoring.coreos.com"
+  image:
+    repository: rancher/grafana-grafana
+    tag: 6.3.6
+    tool:
+      repository: rancher/prometheus-auth
+      tag: v0.2.0
+    proxy:
+      repository: rancher/nginx
+      tag: 1.17.4-alpine
+  nodeSelectors: []
+  resources:
+    inits:
+      limits:
+        memory: 50Mi
+        cpu: 50m
+      requests:
+        memory: 50Mi
+        cpu: 50m
+    core:
+      limits:
+        memory: 200Mi
+        cpu: 200m
+      requests:
+        memory: 100Mi
+        cpu: 100m
+    proxy:
+      limits:
+        memory: 100Mi
+        cpu: 100m
+      requests:
+        memory: 50Mi
+        cpu: 50m
+  persistence:
+    name: ""
+    enabled: false
+    storageClass: ""
+    accessMode: "ReadWriteOnce"
+    size: 50Gi
+  ## Already exist ServiceAccount
+  ##
+  serviceAccountName: ""
+  prometheusDatasourceURL: "http://global-monitoring-thanos"
