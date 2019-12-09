@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-{{ .Release.Name }}
+  name: thanos-{{ .Release.Name }}
   labels:
     app: {{ template "app.name" . }}
     chart: {{ template "app.version" . }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
-    component: ui
+    component: query
 spec:
-  type: {{ .Values.ui.service.type }}
+  type: {{ .Values.thanos.service.type }}
   ports:
-    - port: {{ .Values.ui.service.port }}
+    - port: {{ .Values.thanos.service.port }}
       targetPort: http
       protocol: TCP
       name: http
@@ -19,4 +19,4 @@ spec:
     app: {{ template "app.name" . }}
     chart: {{ template "app.version" . }}
     release: {{ .Release.Name }}
-    component: ui
+    component: query

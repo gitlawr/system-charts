@@ -1,31 +1,57 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "thanos.fullname" . }}-ui
+  name: ui-{{ .Release.Name }}
   labels:
-    app.kubernetes.io/name: {{ include "thanos.name" . }}
-    helm.sh/chart: {{ include "thanos.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app: {{ template "app.name" . }}
+    chart: {{ template "app.version" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
     component: ui
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.ui.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "thanos.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app: {{ template "app.name" . }}
+      chart: {{ template "app.version" . }}
+      heritage: {{ .Release.Service }}
+      release: {{ .Release.Name }}
       component: ui
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "thanos.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ template "app.name" . }}
+        chart: {{ template "app.version" . }}
+        heritage: {{ .Release.Service }}
+        release: {{ .Release.Name }}
         component: ui
     spec:
       containers:
         - name: ui
-          image: 13025759296/monitor
+          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+          imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
+          resources:
+            {{- toYaml .Values.ui.resources | nindent 12 }}
+      {{- if .Values.ui.nodeSelectors }}
+      nodeSelector:
+        {{- range .Values.ui.nodeSelectors }}
+        {{- $pair := regexSplit "=" . 2 }}
+        {{- if eq 2 (len $pair) }}
+        {{ (index $pair 0) }}: {{ (index $pair 1) }}
+        {{- else }}
+        {{ (index $pair 0) }}: ""
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

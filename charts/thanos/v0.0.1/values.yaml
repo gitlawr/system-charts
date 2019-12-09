@@ -1,38 +1,8 @@
 # Default values for thanos.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: thanosio/thanos
-  tag: v0.7.0
-  pullPolicy: IfNotPresent
-
 nameOverride: ""
 fullnameOverride: ""
-
-service:
-  type: NodePort
-  port: 80
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 # column split Ids, e.g., c-abc:c-def
 clusterIds: ""
@@ -51,6 +21,7 @@ grafana:
   image:
     repository: rancher/grafana-grafana
     tag: 6.3.6
+    pullPolicy: IfNotPresent
     tool:
       repository: rancher/prometheus-auth
       tag: v0.2.0
@@ -89,4 +60,57 @@ grafana:
   ## Already exist ServiceAccount
   ##
   serviceAccountName: ""
-  prometheusDatasourceURL: "http://global-monitoring-thanos"
+  prometheusDatasourceURL: "http://thanos-global-monitoring"
+
+thanos:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: thanosio/thanos
+    tag: v0.7.0
+    pullPolicy: IfNotPresent
+    proxy:
+      repository: rancher/nginx
+      tag: 1.17.4-alpine
+  resources:
+    thanos:
+      limits:
+        memory: 300Mi
+        cpu: 300m
+      requests:
+        memory: 50Mi
+        cpu: 50m
+    proxy:
+      limits:
+        memory: 100Mi
+        cpu: 100m
+      requests:
+        memory: 50Mi
+        cpu: 50m
+  affinity: {}
+  nodeSelectors: []
+  tolerations: []
+  service:
+    type: NodePort
+    port: 80
+
+ui:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: 13025759296/monitor
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 300Mi
+      cpu: 300m
+    requests:
+      memory: 50Mi
+      cpu: 50m
+  affinity: {}
+  nodeSelectors: []
+  tolerations: []
+  service:
+    type: NodePort
+    port: 80
