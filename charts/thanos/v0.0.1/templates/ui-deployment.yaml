@@ -36,22 +36,17 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.ui.resources | nindent 12 }}
-      {{- if .Values.ui.nodeSelectors }}
       nodeSelector:
-        {{- range .Values.ui.nodeSelectors }}
-        {{- $pair := regexSplit "=" . 2 }}
-        {{- if eq 2 (len $pair) }}
-        {{ (index $pair 0) }}: {{ (index $pair 1) }}
-        {{- else }}
-        {{ (index $pair 0) }}: ""
-        {{- end }}
-        {{- end }}
+      {{- include "linux-node-selector" . | nindent 8 }}
+      {{- with .Values.ui.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.ui.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.ui.tolerations }}
       tolerations:
+      {{- include "linux-node-tolerations" . | nindent 8 }}
+      {{- with .Values.ui.tolerations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

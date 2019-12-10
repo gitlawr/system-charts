@@ -28,7 +28,7 @@ grafana:
     proxy:
       repository: rancher/nginx
       tag: 1.17.4-alpine
-  nodeSelectors: []
+  nodeSelector: {}
   resources:
     inits:
       limits:
@@ -88,7 +88,7 @@ thanos:
         memory: 50Mi
         cpu: 50m
   affinity: {}
-  nodeSelectors: []
+  nodeSelector: {}
   tolerations: []
   service:
     type: NodePort
@@ -109,7 +109,7 @@ ui:
       memory: 50Mi
       cpu: 50m
   affinity: {}
-  nodeSelectors: []
+  nodeSelector: {}
   tolerations: []
   service:
     type: NodePort

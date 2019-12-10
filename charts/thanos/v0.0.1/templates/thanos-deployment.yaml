@@ -69,23 +69,18 @@ spec:
       {{- end }}
         ip: 127.0.0.1
       {{- end }}
-      {{- if .Values.thanos.nodeSelectors }}
       nodeSelector:
-        {{- range .Values.thanos.nodeSelectors }}
-        {{- $pair := regexSplit "=" . 2 }}
-        {{- if eq 2 (len $pair) }}
-        {{ (index $pair 0) }}: {{ (index $pair 1) }}
-        {{- else }}
-        {{ (index $pair 0) }}: ""
-        {{- end }}
-        {{- end }}
+      {{- include "linux-node-selector" . | nindent 8 }}
+      {{- with .Values.thanos.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.thanos.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.thanos.tolerations }}
       tolerations:
+      {{- include "linux-node-tolerations" . | nindent 8 }}
+      {{- with .Values.thanos.tolerations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
