@@ -1092,7 +1092,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_container_status_restarts_total) by (prometheus_from)",
+              "expr": "floor(sum(increase(kube_pod_container_status_restarts_total[5m])) by (prometheus_from))",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{prometheus_from}}",
