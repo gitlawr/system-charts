@@ -48,7 +48,59 @@ spec:
           subPath: modify-datasource-plugin-json.sh
         - name: grafana-static-contents
           mountPath: /host
+      {{- if .Values.sidecar.datasources.enabled }}
+      - name: sc-datasources
+        image: "{{ .Values.sidecar.image }}"
+        imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
+        env:
+          - name: METHOD
+            value: LIST
+          - name: LABEL
+            value: "{{ .Values.sidecar.datasources.label }}"
+          - name: FOLDER
+            value: "/etc/grafana/provisioning/datasources"
+          - name: RESOURCE
+            value: "both"
+          {{- if .Values.sidecar.datasources.searchNamespace }}
+          - name: NAMESPACE
+            value: "{{ .Values.sidecar.datasources.searchNamespace }}"
+          {{- end }}
+          {{- if .Values.sidecar.skipTlsVerify }}
+          - name: SKIP_TLS_VERIFY
+            value: "{{ .Values.sidecar.skipTlsVerify }}"
+          {{- end }}
+        resources:
+        {{ toYaml .Values.sidecar.resources | indent 10 }}
+        volumeMounts:
+          - name: sc-datasources-volume
+            mountPath: "/etc/grafana/provisioning/datasources"
+      {{- end}}
       containers:
+      {{- if .Values.sidecar.dashboards.enabled }}
+      - name: sc-dashboard
+        image: "{{ .Values.sidecar.image }}"
+        imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
+        env:
+          - name: LABEL
+            value: "{{ .Values.sidecar.dashboards.label }}"
+          - name: FOLDER
+            value: "{{ .Values.sidecar.dashboards.folder }}{{- with .Values.sidecar.dashboards.defaultFolderName }}/{{ . }}{{- end }}"
+          - name: RESOURCE
+            value: "both"
+          {{- if .Values.sidecar.dashboards.searchNamespace }}
+          - name: NAMESPACE
+            value: "{{ .Values.sidecar.dashboards.searchNamespace }}"
+          {{- end }}
+          {{- if .Values.sidecar.skipTlsVerify }}
+          - name: SKIP_TLS_VERIFY
+            value: "{{ .Values.sidecar.skipTlsVerify }}"
+          {{- end }}
+        resources:
+        {{ toYaml .Values.sidecar.resources | indent 10 }}
+        volumeMounts:
+          - name: sc-dashboard-volume
+            mountPath: {{ .Values.sidecar.dashboards.folder | quote }}
+      {{- end}}
       - name: grafana
         image: {{ template "system_default_registry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
         env:
@@ -73,6 +125,19 @@ spec:
         - name: grafana-provisionings
           mountPath: /etc/grafana/provisioning/datasources/all.yaml
           subPath: datasources.yaml
+        {{- if .Values.sidecar.dashboards.enabled }}
+        - name: sc-dashboard-volume
+          mountPath: {{ .Values.sidecar.dashboards.folder | quote }}
+        {{ if .Values.sidecar.dashboards.SCProvider }}
+        - name: sc-dashboard-provider
+          mountPath: "/etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml"
+          subPath: provider.yaml
+        {{- end}}
+        {{- end}}
+        {{- if .Values.sidecar.datasources.enabled }}
+        - name: sc-datasources-volume
+          mountPath: "/etc/grafana/provisioning/datasources"
+        {{- end}}
         ports:
         - name: web
           containerPort: 3000
@@ -161,3 +226,16 @@ spec:
           name: {{ template "app.provisionings.fullname" . }}
       - name: nginx-home
         emptyDir: {}
+      {{- if .Values.sidecar.dashboards.enabled }}
+      - name: sc-dashboard-volume
+        emptyDir: {}
+      {{- if .Values.sidecar.dashboards.SCProvider }}
+      - name: sc-dashboard-provider
+        configMap:
+          name: {{ template "app.fullname" . }}-config-dashboards
+      {{- end }}
+      {{- end }}
+      {{- if .Values.sidecar.datasources.enabled }}
+      - name: sc-datasources-volume
+        emptyDir: {}
+      {{- end -}}
