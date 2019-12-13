@@ -21,34 +21,8 @@ spec:
         chart: {{ template "app.version" . }}
         release: {{ .Release.Name }}
     spec:
-      initContainers:
-      - name: grafana-init-plugin-json-copy
-        image: {{ template "system_default_registry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
-        {{- if and .Values.resources .Values.resources.inits }}
-        resources:
-{{ toYaml .Values.resources.inits | indent 10 }}
-        {{- end }}
-        volumeMounts:
-        - name: grafana-nginx
-          mountPath: /run.sh
-          subPath: copy-datasource-plugin-json.sh
-        - name: grafana-static-contents
-          mountPath: /host
-      - name: grafana-init-plugin-json-modify
-        image: {{ template "system_default_registry" . }}{{ .Values.image.tool.repository }}:{{ .Values.image.tool.tag }}
-        command:
-        - /run.sh
-        {{- if and .Values.resources .Values.resources.inits }}
-        resources:
-{{ toYaml .Values.resources.inits | indent 10 }}
-        {{- end }}
-        volumeMounts:
-        - name: grafana-nginx
-          mountPath: /run.sh
-          subPath: modify-datasource-plugin-json.sh
-        - name: grafana-static-contents
-          mountPath: /host
       {{- if .Values.sidecar.datasources.enabled }}
+      initContainers:
       - name: sc-datasources
         image: "{{ .Values.sidecar.image }}"
         imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
@@ -114,9 +88,6 @@ spec:
         volumeMounts:
         - name: grafana-storage
           mountPath: /var/lib/grafana
-        - name: grafana-static-contents
-          mountPath: /usr/share/grafana/public/app/plugins/datasource/prometheus/plugin.json
-          subPath: grafana/plugin.json
         - name: grafana-dashboards
           mountPath: /var/lib/grafana/rancher-dashboards
         - name: grafana-provisionings
@@ -196,8 +167,6 @@ spec:
         runAsGroup: 472
         fsGroup: 472
       volumes:
-      - name: grafana-static-contents
-        emptyDir: {}
       - name: grafana-storage
         {{- if or .Values.storageSpec .Values.persistence.enabled }}
         persistentVolumeClaim:
@@ -212,12 +181,6 @@ spec:
           - key: nginx.conf
             mode: 438
             path: nginx.conf
-          - key: copy-datasource-plugin-json.sh
-            mode: 0777
-            path: copy-datasource-plugin-json.sh
-          - key: modify-datasource-plugin-json.sh
-            mode: 0777
-            path: modify-datasource-plugin-json.sh
       - name: grafana-dashboards
         configMap:
           name: {{ template "app.dashboards.fullname" . }}
