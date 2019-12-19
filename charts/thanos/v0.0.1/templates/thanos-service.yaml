@@ -12,7 +12,7 @@ spec:
   type: {{ .Values.thanos.service.type }}
   ports:
     - port: {{ .Values.thanos.service.port }}
-      targetPort: http
+      targetPort: 8081
       protocol: TCP
       name: http
   selector:

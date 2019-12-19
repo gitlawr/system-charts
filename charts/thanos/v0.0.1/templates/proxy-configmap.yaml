@@ -39,3 +39,19 @@ data:
             root   /usr/share/nginx/html;
         }
     }
+
+    server {
+        listen       8081;
+
+        location / {
+            proxy_pass http://localhost:10902/;
+            sub_filter_types    text/html application/javascript;
+              sub_filter_once     off;
+              sub_filter          'var PATH_PREFIX = "";' 'var PATH_PREFIX = ".";';
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
