@@ -12,6 +12,7 @@ rancherHostname: ""
 privateCa: false
 
 token: ""
+apiToken: ""
 
 
 grafana:
