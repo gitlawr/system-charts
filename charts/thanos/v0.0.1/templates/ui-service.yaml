@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-{{ .Release.Name }}
+  name: access-dashboard
   labels:
     app: {{ template "app.name" . }}
     chart: {{ template "app.version" . }}
