@@ -594,7 +594,7 @@
           "fill": 0,
           "gridPos": {
             "h": 6,
-            "w": 8,
+            "w": 12,
             "x": 0,
             "y": 16
           },
@@ -684,8 +684,8 @@
           "fill": 0,
           "gridPos": {
             "h": 6,
-            "w": 8,
-            "x": 8,
+            "w": 12,
+            "x": 12,
             "y": 16
           },
           "id": 2059,
@@ -774,7 +774,7 @@
           "fill": 0,
           "gridPos": {
             "h": 6,
-            "w": 8,
+            "w": 12,
             "x": 0,
             "y": 20
           },
@@ -864,8 +864,8 @@
           "fill": 0,
           "gridPos": {
             "h": 6,
-            "w": 8,
-            "x": 8,
+            "w": 12,
+            "x": 12,
             "y": 20
           },
           "id": 2061,
@@ -897,7 +897,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(apiserver_request_count{prometheus_from=~\"$cluster\"}[5m])) by (instance, code, prometheus_from)",
+              "expr": "sum(rate(apiserver_request_count{code!=\"0\", prometheus_from=~\"$cluster\"}[5m])) by (instance, code, prometheus_from)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{prometheus_from}}/{{instance}}/{{code}}",
@@ -1092,6 +1092,96 @@
           "steppedLine": false,
           "targets": [
             {
+              "expr": "sum(kube_pod_status_scheduled{condition=\"false\", prometheus_from=~\"$cluster\"}) by (prometheus_from)",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "{{prometheus_from}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Unhealthy Pod Number",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 0,
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "fill": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 16,
+            "y": 26
+          },
+          "id": 2080,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Total",
+              "fillBelowTo": "Unavailable"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
               "expr": "floor(sum(increase(kube_pod_container_status_restarts_total{prometheus_from=~\"$cluster\"}[5m])) by (prometheus_from))",
               "format": "time_series",
               "intervalFactor": 2,
@@ -1205,7 +1295,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Test",
+  "title": "Rancher Global Monitoring",
   "uid": "icjpCppit",
   "version": 1
 }
