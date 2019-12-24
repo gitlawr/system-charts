@@ -8,6 +8,7 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
     component: ui
+    kubernetes.io/cluster-service: "true"
 spec:
   type: {{ .Values.ui.service.type }}
   ports:
