@@ -61,7 +61,7 @@ grafana:
   ## Already exist ServiceAccount
   ##
   serviceAccountName: ""
-  prometheusDatasourceURL: "http://thanos-global-monitoring"
+  prometheusDatasourceURL: "http://access-thanos"
 
 thanos:
   enabled: true
