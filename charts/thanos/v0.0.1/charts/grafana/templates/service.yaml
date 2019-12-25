@@ -9,13 +9,12 @@ metadata:
     release: {{ .Release.Name }}
     kubernetes.io/cluster-service: "true"
 spec:
-  type: ClusterIP
-  sessionAffinity: ClientIP
+  type: {{ .Values.service.type }}
   selector:
     app: {{ template "app.name" . }}
     chart: {{ template "app.version" . }}
     release: {{ .Release.Name }}
   ports:
-    - name: http
-      port: 80
+    - port: {{ .Values.service.port }}
+      name: http
       targetPort: http

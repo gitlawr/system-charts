@@ -58,6 +58,9 @@ grafana:
     storageClass: ""
     accessMode: "ReadWriteOnce"
     size: 50Gi
+  service:
+    type: ClusterIP
+    port: 80
   ## Already exist ServiceAccount
   ##
   serviceAccountName: ""
