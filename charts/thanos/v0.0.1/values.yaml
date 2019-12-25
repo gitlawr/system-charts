@@ -22,7 +22,7 @@ grafana:
   image:
     repository: rancher/grafana-grafana
     tag: 6.3.6
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tool:
       repository: rancher/prometheus-auth
       tag: v0.2.0
@@ -72,7 +72,7 @@ thanos:
   image:
     repository: thanosio/thanos
     tag: v0.7.0
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     proxy:
       repository: rancher/nginx
       tag: 1.17.4-alpine
@@ -104,7 +104,7 @@ ui:
   image:
     repository: cnrancher/global-monitoring-ui
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   resources:
     limits:
       memory: 300Mi
