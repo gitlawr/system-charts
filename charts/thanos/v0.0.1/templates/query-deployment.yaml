@@ -34,6 +34,10 @@ spec:
           - --store
           - "{{ $clusterId }}:80"
           {{- end }}
+          {{- if .Values.thanos.store.enabled }}
+          - --store
+          - thanos-store-{{ .Release.Name }}:10901
+          {{- end }}
           ports:
             - name: http
               containerPort: 10902

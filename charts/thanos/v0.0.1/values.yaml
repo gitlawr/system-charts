@@ -67,8 +67,6 @@ grafana:
   prometheusDatasourceURL: "http://access-thanos"
 
 thanos:
-  enabled: true
-  replicaCount: 1
   image:
     repository: thanosio/thanos
     tag: v0.9.0
@@ -76,6 +74,11 @@ thanos:
     proxy:
       repository: rancher/nginx
       tag: 1.17.4-alpine
+  # See https://thanos.io/storage.md/
+  objectConfig: {}
+
+  # Querier
+  replicaCount: 1
   resources:
     thanos:
       limits:
@@ -97,6 +100,35 @@ thanos:
   service:
     type: ClusterIP
     port: 80
+
+  
+  # Thanos store gateway
+  store:
+    enabled: false
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: "1"
+      requests:
+        memory: 256Mi
+        cpu: 100m
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+  # Thanos compactor
+  compact:
+    enabled: false
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: "1"
+      requests:
+        memory: 256Mi
+        cpu: 100m
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+
 
 ui:
   enabled: true
