@@ -43,14 +43,6 @@ spec:
             - name: http
               containerPort: 10902
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.thanos.compact.resources | nindent 12 }}
           volumeMounts:
