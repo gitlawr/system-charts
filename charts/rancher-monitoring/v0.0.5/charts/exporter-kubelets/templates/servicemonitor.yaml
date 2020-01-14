@@ -57,7 +57,15 @@ spec:
       {{- end }}
     metricRelabelings:
     - action: labeldrop
-      regex: (^image$|^name$|^cpu$)
+      regex: (^id$|^image$|^name$|^cpu$)
+    - sourceLabels:
+      - namespace
+      - pod
+      targetLabel: pod_id
+      action: replace
+      separator: ":"
+      regex: (.+)
+      replacement: {{ .Values.global.clusterName }}:$1
     relabelings:
     - sourceLabels:
       - __meta_kubernetes_pod_host_ip
@@ -98,7 +106,7 @@ spec:
   - port: http-metrics
     metricRelabelings:
     - action: labeldrop
-      regex: (^image$|^name$|^cpu$)
+      regex: (^id$|^image$|^name$|^cpu$)
     relabelings:
     - sourceLabels:
       - __meta_kubernetes_pod_host_ip
@@ -115,6 +123,15 @@ spec:
   - port: http-metrics
     path: /metrics/cadvisor
     honorLabels: true
+    metricRelabelings:
+    - sourceLabels:
+      - namespace
+      - pod
+      targetLabel: pod_id
+      action: replace
+      separator: ":"
+      regex: (.+)
+      replacement: {{ .Values.global.clusterName }}:$1
     relabelings:
     - sourceLabels:
       - __meta_kubernetes_pod_host_ip
