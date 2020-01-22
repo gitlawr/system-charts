@@ -30,9 +30,11 @@ spec:
           imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
           args:
           - query
+          {{- if .Values.clusterIds }}
           {{- range $clusterId := (split ":" .Values.clusterIds) }}
           - --store
           - "{{ $clusterId }}:80"
+          {{- end }}
           {{- end }}
           {{- if .Values.thanos.store.enabled }}
           - --store
