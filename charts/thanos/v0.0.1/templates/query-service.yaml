@@ -10,9 +10,9 @@ metadata:
     component: query
     kubernetes.io/cluster-service: "true"
 spec:
-  type: {{ .Values.thanos.service.type }}
+  type: {{ .Values.thanos.query.service.type }}
   ports:
-    - port: {{ .Values.thanos.service.port }}
+    - port: {{ .Values.thanos.query.service.port }}
       targetPort: 8081
       protocol: TCP
       name: http

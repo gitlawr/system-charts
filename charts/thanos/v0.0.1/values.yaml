@@ -77,29 +77,30 @@ thanos:
   # See https://thanos.io/storage.md/
   objectConfig: {}
 
-  # Querier
-  replicaCount: 1
-  resources:
-    thanos:
+  # Thanos query
+  query:
+    replicaCount: 1
+    resources:
       limits:
         memory: 1Gi
         cpu: "1"
       requests:
         memory: 256Mi
-        cpu: 100m
+        cpu: 100m 
     proxy:
-      limits:
-        memory: 100Mi
-        cpu: 100m
-      requests:
-        memory: 50Mi
-        cpu: 50m
-  affinity: {}
-  nodeSelector: {}
-  tolerations: []
-  service:
-    type: ClusterIP
-    port: 80
+      resources:
+        limits:
+          memory: 100Mi
+          cpu: 100m
+        requests:
+          memory: 50Mi
+          cpu: 50m
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+    service:
+      type: ClusterIP
+      port: 80
 
   
   # Thanos store gateway

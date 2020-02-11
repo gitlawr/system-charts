@@ -9,7 +9,7 @@ metadata:
     release: {{ .Release.Name }}
     component: query
 spec:
-  replicas: {{ .Values.thanos.replicaCount }}
+  replicas: {{ .Values.thanos.query.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "app.name" . }}
@@ -53,12 +53,12 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.thanos.resources.thanos | nindent 12 }}
+            {{- toYaml .Values.thanos.query.resources | nindent 12 }}
         - name: nginx
           image: "{{ .Values.thanos.image.proxy.repository }}:{{ .Values.thanos.image.proxy.tag }}"
           imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.thanos.resources.proxy | nindent 12 }}
+            {{- toYaml .Values.thanos.query.proxy.resources | nindent 12 }}
           volumeMounts:
           - mountPath: /etc/nginx/conf.d/default.conf
             name: nginx-config
@@ -77,16 +77,16 @@ spec:
       {{- end }}
       nodeSelector:
       {{- include "linux-node-selector" . | nindent 8 }}
-      {{- with .Values.thanos.nodeSelector }}
+      {{- with .Values.thanos.query.nodeSelector }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.thanos.affinity }}
+      {{- with .Values.thanos.query.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       tolerations:
       {{- include "linux-node-tolerations" . | nindent 8 }}
-      {{- with .Values.thanos.tolerations }}
+      {{- with .Values.thanos.query.tolerations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
