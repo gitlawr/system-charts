@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: thanos
-          image: "{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
+          image: "{{ template "system_default_registry" . }}{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
           imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
           args:
           - query
@@ -55,7 +55,7 @@ spec:
           resources:
             {{- toYaml .Values.thanos.query.resources | nindent 12 }}
         - name: nginx
-          image: "{{ .Values.thanos.image.proxy.repository }}:{{ .Values.thanos.image.proxy.tag }}"
+          image: "{{ template "system_default_registry" . }}{{ .Values.thanos.image.proxy.repository }}:{{ .Values.thanos.image.proxy.tag }}"
           imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
           resources:
             {{- toYaml .Values.thanos.query.proxy.resources | nindent 12 }}

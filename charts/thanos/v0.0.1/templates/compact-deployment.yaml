@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: thanos
-          image: "{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
+          image: "{{ template "system_default_registry" . }}{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
           imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
           args:
           - compact

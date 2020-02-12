@@ -151,3 +151,6 @@ ui:
   service:
     type: ClusterIP
     port: 80
+    
+global:
+  systemDefaultRegistry: ""

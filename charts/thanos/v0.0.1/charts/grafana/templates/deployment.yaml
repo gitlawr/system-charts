@@ -24,7 +24,7 @@ spec:
       {{- if .Values.sidecar.datasources.enabled }}
       initContainers:
       - name: sc-datasources
-        image: "{{ .Values.sidecar.image }}"
+        image: "{{ template "system_default_registry" . }}{{ .Values.sidecar.image }}"
         imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
         env:
           - name: METHOD
@@ -52,7 +52,7 @@ spec:
       containers:
       {{- if .Values.sidecar.dashboards.enabled }}
       - name: sc-dashboard
-        image: "{{ .Values.sidecar.image }}"
+        image: "{{ template "system_default_registry" . }}{{ .Values.sidecar.image }}"
         imagePullPolicy: {{ .Values.sidecar.imagePullPolicy }}
         env:
           - name: LABEL
