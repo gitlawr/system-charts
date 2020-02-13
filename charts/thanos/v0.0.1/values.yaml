@@ -136,8 +136,8 @@ ui:
   replicaCount: 1
   image:
     repository: cnrancher/global-monitoring-ui
-    tag: latest
-    pullPolicy: Always
+    tag: 0.0.1
+    pullPolicy: IfNotPresent
   resources:
     limits:
       memory: 300Mi
