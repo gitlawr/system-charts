@@ -40,6 +40,12 @@ spec:
           - --store
           - thanos-store-{{ .Release.Name }}:10901
           {{- end }}
+          {{- range .Values.thanos.query.additionalStores }}
+          {{- if (and .clusterId .namespace .service) }}
+          - --store
+          - "{{ .service }}.{{ .namespace }}.{{ .clusterId }}:80"
+          {{- end }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 10902
@@ -68,10 +74,17 @@ spec:
             name: ca-cert
           {{- end }}
       hostAliases:
-      {{- if .Values.clusterIds }}
+      {{- if or .Values.clusterIds .Values.thanos.query.additionalStores }}
       - hostnames:
+      {{- if .Values.clusterIds }}
       {{- range $clusterId := (split ":" .Values.clusterIds) }}
         - {{ $clusterId }}
+      {{- end }}
+      {{- end }}
+      {{- range .Values.thanos.query.additionalStores }}
+      {{- if (and .clusterId .namespace .service) }}
+        - "{{ .service }}.{{ .namespace }}.{{ .clusterId }}"
+      {{- end }}
       {{- end }}
         ip: 127.0.0.1
       {{- end }}

@@ -87,6 +87,10 @@ thanos:
     service:
       type: ClusterIP
       port: 80
+    additionalStores:
+    # - clusterId: 
+    #   namespace: 
+    #   service: 
 
   
   # Thanos store gateway
