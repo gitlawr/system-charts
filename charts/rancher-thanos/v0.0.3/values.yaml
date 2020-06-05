@@ -20,7 +20,7 @@ grafana:
   apiGroup: "monitoring.coreos.com"
   image:
     repository: rancher/grafana-grafana
-    tag: 6.3.6
+    tag: 6.7.4
     pullPolicy: IfNotPresent
     proxy:
       repository: cnrancher/nginx
@@ -57,7 +57,7 @@ grafana:
 thanos:
   image:
     repository: rancher/thanos
-    tag: v0.9.0
+    tag: v0.10.1
     pullPolicy: IfNotPresent
     proxy:
       repository: cnrancher/nginx
