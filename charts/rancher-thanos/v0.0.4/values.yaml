@@ -16,7 +16,7 @@ privateCa: false
 
 
 grafana:
-  enabled: false
+  enabled: true
   apiGroup: "monitoring.coreos.com"
   image:
     repository: rancher/grafana-grafana
@@ -54,6 +54,51 @@ grafana:
   serviceAccountName: ""
   prometheusDatasourceURL: "http://access-thanos"
 
+alertmanager:
+  enabled: false
+  replicaCount: 1
+  apiGroup: "monitoring.coreos.com"
+  image:
+    repository: rancher/prom-alertmanager
+    tag: v0.17.0
+  nodeSelector: {}
+  resources:
+    limits:
+      memory: 200Mi
+      cpu: 200m
+    requests:
+      memory: 100Mi
+      cpu: 100m
+  persistence:
+    name: ""
+    enabled: false
+    storageClass: ""
+    accessMode: "ReadWriteOnce"
+    size: 50Gi
+  service:
+    type: ClusterIP
+    port: 80
+  config: 
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
+      receiver: 'web.hook'
+    receivers:
+    - name: 'web.hook'
+      webhook_configs:
+      - url: 'http://127.0.0.1:5001/'
+    inhibit_rules:
+      - source_match:
+          severity: 'critical'
+        target_match:
+          severity: 'warning'
+        equal: ['alertname', 'dev', 'instance']
+
+
 thanos:
   image:
     repository: rancher/thanos
@@ -68,6 +113,8 @@ thanos:
   # Thanos query
   query:
     replicaCount: 1
+    # Optional additional arguments
+    extraArgs: []
     resources:
       limits:
         memory: 1Gi
@@ -94,6 +141,8 @@ thanos:
   # Thanos store gateway
   store:
     enabled: false
+    # Optional additional arguments
+    extraArgs: []
     resources:
       limits:
         memory: 1Gi
@@ -107,6 +156,8 @@ thanos:
   # Thanos compactor
   compact:
     enabled: false
+    # Optional additional arguments
+    extraArgs: []
     resources:
       limits:
         memory: 1Gi
@@ -117,6 +168,28 @@ thanos:
     affinity: {}
     nodeSelector: {}
     tolerations: []
+  # Thanos rule
+  rule:
+    enabled: false
+    replicaCount: 1
+    # Optional additional arguments
+    extraArgs: []
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: "1"
+      requests:
+        memory: 256Mi
+        cpu: 100m
+    affinity: {}
+    nodeSelector: {}
+    tolerations: []
+    config:
+      groups:
+      - name: example
+        rules:
+        - record: job:http_inprogress_requests:sum
+          expr: sum(http_inprogress_requests) by (job)
 
 
 ui:
@@ -143,6 +216,43 @@ ui:
   service:
     type: ClusterIP
     port: 80
-    
+
+
+webhook-receiver:
+  enabled: false
+  image:
+    repository: "cnrancher/webhook-receiver"
+    tag: v0.2.3
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 300Mi
+      cpu: 300m
+    requests:
+      memory: 50Mi
+      cpu: 50m
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+
+
+exporter:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: "cnrancher/global-monitoring-exporter"
+    tag: v0.1.1
+  resources:
+    limits:
+      memory: 300Mi
+      cpu: 300m
+    requests:
+      memory: 50Mi
+      cpu: 50m
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+
+
 global:
   systemDefaultRegistry: ""

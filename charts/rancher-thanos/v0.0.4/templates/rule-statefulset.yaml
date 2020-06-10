@@ -1,0 +1,95 @@
+{{- if .Values.thanos.rule.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-rule-{{ .Release.Name }}
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: {{ .Chart.Name }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: rule
+spec:
+  replicas: {{ .Values.thanos.rule.replicaCount }}
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+      component: rule
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+        component: rule
+    spec:
+      podManagementPolicy: Parallel
+      containers:
+        - name: thanos
+          image: "{{ template "system_default_registry" . }}{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
+          imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
+          args:
+          - rule
+          - --data-dir
+          - /data
+          - --rule-file
+          - /etc/thanos/*.rule.yaml
+          {{- range until (int .Values.alertmanager.replicaCount) }}
+          - --alertmanagers.url
+          - http://alertmanager-{{ $.Release.Name }}-{{ . }}.alertmanager-operated:9093
+          {{- end }}
+          - --query
+          - access-thanos
+          - --label
+          - replica="$(POD_NAME)"
+          - --alert.label-drop
+          - replica
+          {{- if .Values.thanos.rule.extraArgs }}
+          {{ toYaml .Values.thanos.rule.extraArgs }}
+          {{- end }}
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          resources:
+            {{- toYaml .Values.thanos.rule.resources | nindent 12 }}
+          volumeMounts:
+          - mountPath: /etc/thanos/thanos.rule.yaml
+            name: rule-file
+            subPath: thanos.rule.yaml
+      nodeSelector:
+      {{- include "linux-node-selector" . | nindent 8 }}
+      {{- with .Values.thanos.rule.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ template "app.fullname" . }}
+                  component: rule
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      {{- with .Values.thanos.rule.affinity }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      tolerations:
+      {{- include "linux-node-tolerations" . | nindent 8 }}
+      {{- with .Values.thanos.rule.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - secret:
+          items:
+          - key: thanos.rule.yaml
+            path: thanos.rule.yaml
+          secretName: thanos-rule-{{ .Release.Name }}
+        name: rule-file
+{{- end }}

@@ -39,6 +39,9 @@ spec:
           - 0.0.0.0:10901
           - --http-address
           - 0.0.0.0:10902
+          {{- if .Values.thanos.store.extraArgs }}
+          {{ toYaml .Values.thanos.store.extraArgs }}
+          {{- end }}
           ports:
             - name: grpc
               containerPort: 10901

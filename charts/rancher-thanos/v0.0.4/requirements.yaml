@@ -1,0 +1,15 @@
+dependencies:
+  - name: alertmanager
+    version: 0.0.1
+    condition: alertmanager.enabled
+    repository: "file://./charts/alertmanager/"
+
+  - name: grafana
+    version: 0.0.1
+    condition: grafana.enabled
+    repository: "file://./charts/grafana/"
+
+  - name: webhook-receiver
+    version: 0.0.1
+    condition: webhook-receiver.enabled
+    repository: "file://./charts/webhook-receiver/"

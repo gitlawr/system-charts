@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: thanos-{{ .Release.Name }}
+  name: thanos-query-{{ .Release.Name }}
   labels:
     app: {{ template "app.fullname" . }}
     chart: {{ .Chart.Name }}
@@ -41,6 +41,9 @@ spec:
           {{- if .Values.thanos.store.enabled }}
           - --store
           - thanos-store-{{ .Release.Name }}:10901
+          {{- end }}
+          {{- if .Values.thanos.query.extraArgs }}
+          {{ toYaml .Values.thanos.query.extraArgs }}
           {{- end }}
           ports:
             - name: http

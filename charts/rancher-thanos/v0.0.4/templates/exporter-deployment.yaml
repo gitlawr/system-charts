@@ -1,0 +1,70 @@
+{{- if .Values.exporter.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: {{ .Chart.Name }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: exporter
+  name: exporter-{{ .Release.Name }}
+spec:
+  replicas: {{ .Values.exporter.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+      chart: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+      component: exporter
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ .Release.Name }}
+        component: exporter
+    spec:
+      containers:
+      - name: exporter
+        image: {{ template "system_default_registry" . }}{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}
+        imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+        env:
+        - name: CATTLE_API_TOKEN
+          value: {{ .Values.apiToken }}
+        - name: CATTLE_URL
+          value: https://{{ .Values.rancherHost }}
+        - name: THANOS_QUERY_URL
+          value: http://access-thanos
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        ports:
+        - containerPort: 80
+          name: http
+{{- if .Values.exporter.affinity }}
+      affinity:
+{{ toYaml .Values.exporter.affinity | indent 8 }}
+{{- end }}
+      nodeSelector:
+{{- include "linux-node-selector" . | nindent 8 }}
+{{- if .Values.exporter.nodeSelector }}
+{{ toYaml .Values.exporter.nodeSelector | indent 8 }}
+{{- end }}
+      tolerations:
+{{- include "linux-node-tolerations" . | nindent 8 }}
+{{- if .Values.exporter.tolerations }}
+{{ toYaml .Values.exporter.tolerations | indent 8 }}
+{{- end }}
+      resources:
+{{ toYaml .Values.exporter.resources | indent 8 }} 
+{{- end }}

@@ -1,0 +1,25 @@
+{{- if .Values.thanos.rule.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: access-thanos-rule
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: {{ .Chart.Name }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: rule
+    kubernetes.io/cluster-service: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 10902
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "app.fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    component: rule
+{{- end }}
