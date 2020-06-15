@@ -59,9 +59,19 @@ spec:
           resources:
             {{- toYaml .Values.thanos.rule.resources | nindent 12 }}
           volumeMounts:
-          - mountPath: /etc/thanos/thanos.rule.yaml
+          - mountPath: /etc/thanos
             name: rule-file
-            subPath: thanos.rule.yaml
+        - args:
+          - --webhook-url=http://localhost:10902/-/reload
+          - --volume-dir=/etc/thanos
+          image: "{{ template "system_default_registry" . }}{{ .Values.thanos.image.reloader.repository }}:{{ .Values.thanos.image.reloader.tag }}"
+          imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
+          name: rules-configmap-reloader
+          resources:
+            {{- toYaml .Values.thanos.rule.resources.reloader.resources | nindent 12 }}
+          volumeMounts:
+          - mountPath: /etc/thanos
+            name: rule-file
       nodeSelector:
       {{- include "linux-node-selector" . | nindent 8 }}
       {{- with .Values.thanos.rule.nodeSelector }}
