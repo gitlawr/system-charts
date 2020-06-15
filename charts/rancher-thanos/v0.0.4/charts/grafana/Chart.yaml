@@ -2,7 +2,7 @@ apiVersion: v1
 description: Creates Grafana instance for Kubernetes which maintaining by Rancher 2.
 engine: gotpl
 maintainers:
-- name: thxCode
-  email: frank@rancher.com
+- name: Lawrence Li
+  email: lawrence@rancher.com
 name: grafana
 version: 0.0.1

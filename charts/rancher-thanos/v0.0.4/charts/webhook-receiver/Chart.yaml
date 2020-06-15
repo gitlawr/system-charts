@@ -4,5 +4,5 @@ name: webhook-receiver
 version: 0.0.1
 engine: gotpl
 maintainers:
-- name: Logan Zhang
-  email: logan@rancher.com
+- name: Lawrence Li
+  email: lawrence@rancher.com

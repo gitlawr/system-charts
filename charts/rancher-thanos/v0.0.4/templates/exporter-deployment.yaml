@@ -33,7 +33,7 @@ spec:
         - name: CATTLE_API_TOKEN
           value: {{ .Values.apiToken }}
         - name: CATTLE_URL
-          value: https://{{ .Values.rancherHost }}
+          value: https://{{ trimPrefix "https://" .Values.rancherHost }}
         - name: THANOS_QUERY_URL
           value: http://access-thanos
         livenessProbe:
